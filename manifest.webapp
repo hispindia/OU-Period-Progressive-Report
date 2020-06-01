@@ -1,0 +1,20 @@
+{
+  "launch_path": "index.html",
+  "default_locale": "en",
+  "activities": {
+    "dhis": {
+      "href": "*"
+    }
+  },
+  "appType": "APP",
+  "name": "OU/Period Progressive Report",
+  "version": "1.2.0",
+  "description": "",
+  "developer": {
+    "name": "mithilesh",
+    "email": "mithilesh.hisp@gmail.com"
+  },
+  "icons": {
+    "48": "images/icon.png"
+  }
+}
