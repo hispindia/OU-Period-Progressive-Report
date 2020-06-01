@@ -17,17 +17,15 @@ function periodWiseProgressiveReport(params,callback){
             return
         }
         
-        if (body.listGrid.rows[0][0].value == ""){
+        if (body.rows[0] == ""){
             alert("No facility found for the parameters selected")
             callback();
             return;
         }
-        //console.log( " ouGroupWiseSourceIDs "  ,  JSON.parse(body.listGrid.rows[0][0] ) );
-        var ouGroupWiseSourceIDs = JSON.parse(body.listGrid.rows[0][0].value);
-
-        console.log( ouGroupWiseSourceIDs , " ouGroupWiseSourceIDs ");
+        
+        var ouGroupWiseSourceIDs = JSON.parse(body.rows[0]);
         var mainQ = __getMainQuery(params,ouGroupWiseSourceIDs);
-        console.log( " main query " + mainQ);
+        //console.log(mainQ);
         sqlViewService.dip(SQLVIEWPREFIX,mainQ, function(error,response,body){
             if (error){
 

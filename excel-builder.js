@@ -10,8 +10,7 @@ function excelBuilder(mapping,
                       enddate,
                       callback){
 
-    //data = JSON.parse(data.rows[0])
-    data = JSON.parse(data.listGrid.rows[0][0].value)
+    data = JSON.parse(data.rows[0])
 
     data = data.reduce((map,obj) => {
         map[obj.key] = obj.value

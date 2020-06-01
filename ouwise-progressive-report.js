@@ -17,13 +17,13 @@ function ouWiseProgressiveReport(params,callback){
             return
         }
         
-        if (body.listGrid.rows[0][0].value == ""){
+        if (body.rows[0] == ""){
             alert("No facility found for the parameters selected")
             callback();
             return;
         }
         
-        var ouGroupWiseSourceIDs = JSON.parse(body.listGrid.rows[0][0].value);
+        var ouGroupWiseSourceIDs = JSON.parse(body.rows[0]);
         var mainQ = __getMainQuery(params,ouGroupWiseSourceIDs);
 
         sqlViewService.dip(SQLVIEWPREFIX,mainQ, function(error,response,body){
