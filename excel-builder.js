@@ -31,12 +31,6 @@ function excelBuilder(mapping,
                                                                              mapping.facilityCell)
 
     XLSX.fromDataAsync(excelTemplate,{base64:true}).then(function(wb){
-        
-        if (!wb.sheet(mapping.sheetName)){
-            alert(mapping.sheetName+"<-Sheet not found. This may be a problem with the configuration of the report excel template. Please contact Admin.");
-            callback();
-            return;
-        }
         var wbOps = new fileOps(wb,mapping.sheetName);
         
         wbOps.write(rowDataCellValueList);
@@ -130,9 +124,9 @@ function sumMap(ref,map){
 
     for (var key in map){
         if (!ref[key]){
-            ref[key] = Number(map[key]);
+            ref[key] = map[key];
         }else{
-            ref[key] = Number(ref[key]) + Number(map[key]);
+            ref[key] = parseInt(ref[key]) + parseInt(map[key]);
         }
     }
 

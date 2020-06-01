@@ -1,0 +1,49 @@
+import queries from '../common-sql.js'
+
+function facilityWiseSourceQ(selectedOUUID,
+                             ouGroupUIDKeys){
+    
+    this.makeUseCapturedQuery = function(){
+        selectedOUUID = `'${selectedOUUID}'`;
+
+        var Q = ouGroupUIDKeys.map(key =>{
+            var ouGroupUIDsCommaSeprated = "'"+key.replace(/-/g,"','") + "'"
+            key = `'${key}'`;            
+            return queries.
+                getOUGroupMembersFilteredBySelectedOUChildren(selectedOUUID,
+                                                              key,
+                                                              ouGroupUIDsCommaSeprated);
+        });
+
+        Q.push( queries.getNoGroupSelectedOUChildren(selectedOUUID));
+        Q = queries.unionize(Q)
+        Q = queries.jsonize(Q)
+        console.log(Q)
+        return Q;
+    }
+
+
+     this.makeGenAggregatedQuery = function(){
+
+         selectedOUUID = `'${selectedOUUID}'`;
+         
+         var Q = ouGroupUIDKeys.map(key =>{
+             var ouGroupUIDsCommaSeprated = "'"+key.replace(/-/g,"','") + "'"
+             key = `'${key}'`;            
+             return queries.
+                 getOUGroupMembersFilteredBySelectedOUChildrenDescendants(selectedOUUID,
+                                                                          key,
+                                                                          ouGroupUIDsCommaSeprated);
+         });
+         
+         Q.push( queries.getNoGroupSelectedOUDescendants(selectedOUUID));
+         Q = queries.unionize(Q)
+         Q = queries.jsonize(Q)
+         console.log(Q)
+         return Q;
+     }
+    
+}
+
+
+module.exports = facilityWiseSourceQ;

@@ -1,42 +1,21 @@
 import React,{propTypes} from 'react';
 import reportGenerator from '../report-generator';
-import api from 'dhis2api';
+import api from '../lib/dhis2API';
 
 export function ReportSelection(props){
    
     var instance = Object.create(React.Component.prototype);
     instance.props = props;
 
-    // sort reports by name
-    instance.props.data.reports.sort(function(a,b){
-        return a.name > b.name ? 1:-1;
-    });
-    
     var keyToObjMap = props.data.reports.reduce((map,obj) =>{
         map[obj.key] = obj;
         return map;
     },{});
-
-    var reportGroupMap = props.data.reports.reduce((map,obj) =>{
-        if (!map[obj.reportGroup] && obj.reportGroup){
-            map[obj.reportGroup] = obj;
-        }
-        return map;
-    },{});
-    var reportGroups = [];
-
-    for (var key in reportGroupMap){
-        reportGroups.push(reportGroupMap[key]);
-    }
-
-    reportGroups.sort(function(a,b){
-        return a.reportGroup > b.reportGroup ?1:-1;
-    })
+    
 
     var state = {
         selectedReport : "-1",
         selectedReportKey : "-1",
-        selectedReportGroup : "all",
         reportList : [],
         selectedOUGroup : "-1",
         selectedOU : "-1",
@@ -122,26 +101,6 @@ export function ReportSelection(props){
             flag = true;
         }
 
-   /*     if ((Number(state.endPe) - Number(state.startPe)) == 0){
-            alert("Please select at least 1 unit of period.");
-            flag=true;
-        }
-     */   
-        if (state.aggregationType == "raw_report"){
-            
-            if (((Number(state.endPe) - Number(state.startPe)) != 1)  &&
-                state.selectedReport.reportType == "OUWiseProgressive"){
-                alert("Raw Data Mode does not support Mulitple Period Selection for Org Unit Progressive Reports!");
-                flag=true;
-            }
-
-            if (state.selectedOUGroup != "-1" &&
-                state.selectedReport.reportType == "PeriodWiseProgressive"){
-                alert("Raw Data Mode does not support Org Unit Group Selection in Period Wise Progress Reports!");
-                flag=true;            
-            }
-        }
-        
         return flag;
     }
     
@@ -152,27 +111,13 @@ export function ReportSelection(props){
                       ];
         
         reports.forEach(function(report){
-
-            if (state.selectedReportGroup == "all" || report.reportGroup == state.selectedReportGroup){
-                
-                options.push(<option key = {report.key}  value={report.key} >{report.name}</option>);
-            }
-        });        
-        return options;      
-    }
-    
-    function getReportGroupOptions(reports){
-
-        var options = [
-                <option key="select_report_group"  value="all"> All </option>
-                      ];
+            options.push(<option key = {report.key}  value={report.key} >{report.name}</option>);
+        });
         
-        reportGroups.forEach(function(report){
-            options.push(<option key = {report.reportGroup}  value={report.reportGroup} >{report.reportGroup}</option>);
-        });        
         return options;
+        
     }
-    
+
     function onReportChange(e){
         var reportKey = e.target.selectedOptions[0].value;
         
@@ -238,12 +183,6 @@ export function ReportSelection(props){
             instance.setState(state);
         }
 
-        function onReportGroupChange(e){
-            state.selectedReportGroup = e.target.value;
-            state.selectedReport = "-1";
-            state.selectedReportKey="-1";
-            instance.setState(state);
-        }
         
         return ( 
                 <form onSubmit={handleSubmit} className="formX">
@@ -251,11 +190,6 @@ export function ReportSelection(props){
             
                 <table className="formX">
                 <tbody>
-                 <tr>
-                <td>  Select Report Group : </td><td><select  value={state.selectedReportGroup} onChange={onReportGroupChange} id="reportgroup">{getReportGroupOptions(props.data.reports)}</select><br></br>              
-                </td>
-                <td className="leftM">  </td>
-                </tr>
                 <tr>
                 <td>  Select Report<span style={{"color":"red"}}> * </span> : </td><td><select  value={state.selectedReportKey} onChange={onReportChange} id="report">{getReportOptions(props.data.reports)}</select><br></br>                <label key="reportValidation" ><i>{state.reportValidation}</i></label>
                 </td>
@@ -269,10 +203,7 @@ export function ReportSelection(props){
                 </tr>              
                 <tr>
                 <td> Select Org Unit Group : </td><td><select value={state.selectedOUGroup} onChange = {onOUGroupChange} id="ouGroup">{getOrgUnitGroupOptions(props.data.ouGroups)}</select></td>
-                <td className="leftM" > Select Aggregation Mode : </td><td><select onChange = {onAggregationTypeChange.bind(this)} value = { state.aggregationType  }  id="aggregationType"> <option key="use_captured"  value="use_captured" > Use Captured </option>
-                <option key="agg_descendants" value="agg_descendants" > Generate Aggregated </option>
-                <option key="no_agg_use_captured" value="raw_report" > Raw Data </option>
-                </select></td>
+                <td className="leftM" > Select Aggregation Mode : </td><td><select onChange = {onAggregationTypeChange.bind(this)} value = { state.aggregationType  }  id="aggregationType"> <option key="use_captured"  value="use_captured" > Use Captured </option> <option key="agg_descendants" value="agg_descendants" > Generate Aggregated </option> </select></td>
                 </tr>
                 <tr></tr><tr></tr>
                 <tr><td>  <input type="submit" value="Generate Report" ></input></td>
